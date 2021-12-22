@@ -1,48 +1,57 @@
 <template>
-  <label>{{ props.msg }}</label>
+  <label></label>
   <div class="card">
     <div class="logo">
-      <img src="@/assets/Bitcoin-logo.svg" alt="logo" />
+      <img :src="logo" alt="logo" />
       <img src="@/assets/wifi.svg" alt="wifi" />
     </div>
     <img class="chip" src="@/assets/chip.svg" alt="chip" />
 
-    <p class="card_number">{{ props.number }}</p>
+    <p class="card_number">
+      {{ props.number === null ? "XXXX XXXX XXXX XXXX" : props.number }}
+    </p>
     <div class="grid">
       <div class="card_space left">
         <span class="card_label"> CARDHOLDER NAME </span>
-        <p class="card_info">FIRST LAST</p>
+        <p class="card_info">
+          {{ props.name === null ? "FIRSTNAME LASTNAME" : props.name }}
+        </p>
       </div>
       <div class="card_space right">
         <span class="card_label"> EXPIRES </span>
-        <p class="card_info">MM/YY</p>
+        <p class="card_info">
+          {{ props.valid === null ? "MM/YY" : props.valid }}
+        </p>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-interface props {
-  msg?: string;
-  number?: string;
-}
-const props = withDefaults(defineProps<props>(), {
-  msg: "",
-  number: "XXXX XXXX XXXX XXXX",
+<script setup>
+import { onBeforeUpdate, onMounted, ref } from "vue";
+
+const props = defineProps({
+  msg: String,
+  number: String,
+  name: String,
+  valid: String,
+  vendor: String,
 });
 
-// export default {
-//   data() {
-//     return {
-//       logo: "Bitcoin",
-//       imgClicked: false,
-//     };
-//   },
-//   props: {
-//     msg: String,
-//     number: String,
-//   },
-// };
+let logo = ref(null);
+onMounted(() => {
+  logo.value = getLogoPath(props.vendor);
+});
+onBeforeUpdate(() => {
+  logo.value = getLogoPath(props.vendor);
+});
+
+const getLogoPath = (vendor) => {
+  let logo = "";
+  vendor === null ? (logo = "BITCOIN") : (logo = vendor.split(" ")[0]);
+  var images = require.context("../assets/", false, /\.svg$/);
+  return images("./" + logo + ".svg");
+};
 </script>
 
 <style scoped>
@@ -53,6 +62,12 @@ const props = withDefaults(defineProps<props>(), {
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
   /* filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.12)); */
+  background: linear-gradient(
+      248.3deg,
+      rgba(255, 255, 255, 0.24) 0%,
+      rgba(255, 255, 255, 0) 100%
+    ),
+    #d0d0d0;
 }
 .logo {
   display: flex;

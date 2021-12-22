@@ -1,13 +1,13 @@
 <template>
-  <h1>{{ msg }}</h1>
+  <h1>{{ props.header }}</h1>
+  <h5>{{ props.subheader }}</h5>
 </template>
 
-<script>
-export default {
-  props: {
-    msg: String,
-  },
-};
+<script setup>
+const props = defineProps({
+  header: String,
+  subheader: String,
+});
 </script>
 
 <style></style>

@@ -1,75 +1,100 @@
 <template>
-  <form @submit.prevent="onSubmit">
-    <div>
-      <label
-        >CARD NUMBER
-        <!-- <input
-          required
-          oninValid="this.setCustomValidity('Enter 16 digits number')"
-          pattern=".*\S+.*"
-          name="nr"
-          type="text"
-          @input="updateTitle"
-        /> -->
-      </label>
-    </div>
-    <!-- <label
-      >CARDHOLDER NAME
-      <input type="text" v-model="card.name" name="name" />
+  <form @submit.prevent>
+    <label
+      >CARD NUMBER
+      <input
+        required
+        oninValid="this.setCustomValidity('Enter 16 digits number')"
+        pattern=".*\S+.*"
+        name="nr"
+        type="Number"
+        min="16"
+        max="16"
+        v-model="card.nr"
+        @input="updateNumber"
+      />
     </label>
+
+    <label
+      >CARDHOLDER NAME
+      <input type="text" name="names" v-model="card.name" @input="updateName" />
+    </label>
+
     <div class="column-grid">
       <div class="column-grid item">
         <label
           >VALID THRU
-          <input type="text" v-model="card.valid" name="valid" />
+          <input
+            type="text"
+            name="valid"
+            v-model="card.valid"
+            @input="updateValid"
+          />
         </label>
       </div>
       <div class="column-grid item">
         <label
           >CCV
-          <input type="text" v-model="card.ccv" name="ccv" />
+          <input type="text" name="ccv" v-model="card.ccv" />
         </label>
       </div>
     </div>
+
     <label
       >VENDOR
-      <select name="vendor" v-model="card.vendor">
+      <select name="vendor" v-model="card.vendor" @input="updateVendor">
         <option>BITCOIN INC</option>
         <option>NINJA BANK</option>
         <option>BLOCK CHAIN INC</option>
         <option>EVIL CORP</option>
       </select>
-    </label> -->
+    </label>
   </form>
-  <button type="submit" value="Submit" class="btn">ADD CARD</button>
-  <button @click="update">Alert</button>
-  <input type="text" @input="update">
+
+  <button @click="onSubmit" class="btn">ADD CARD</button>
 </template>
 
 <script setup>
+import { reactive } from "vue";
+import { v4 as uuidv4 } from "uuid";
 
-// let card = reactive({
-//   nr: "",
-//   name: "",
-//   valid: "",
-//   ccv: "",
-//   vendor: "",
-// });
-
-// const props = defineProps({
-//   title: String,
-// });
-
-const emits = defineEmits(["child"]);
-
-// const onClick = () => {
-//   console.log(card);
-// };
-const onSubmit = (event) => {
-  console.log(event);
+const initialState = {
+  nr: "",
+  name: "",
+  valid: "",
+  ccv: "",
+  vendor: "",
 };
-const update = (event) => {
-  emits("child", event.target.value);
+const card = reactive({ ...initialState });
+
+const emits = defineEmits(["nr", "name", "valid", "vendor", "item"]);
+const reset = () => {
+  Object.assign(card, initialState);
+};
+
+const onSubmit = () => {
+  const newCardItem = {
+    card,
+    id: uuidv4(),
+  };
+  emits("item", newCardItem);
+  reset();
+};
+
+const updateNumber = (event) => {
+  emits("nr", event.target.value);
+};
+
+const updateName = (event) => {
+  emits("name", event.target.value);
+};
+
+const updateValid = (event) => {
+  emits("valid", event.target.value);
+};
+
+const updateVendor = (event) => {
+  emits("vendor", event.target.value);
 };
 </script>
 
