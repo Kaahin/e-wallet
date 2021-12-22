@@ -1,8 +1,8 @@
 <template>
-  <form @submit="addCard">
+  <form @submit.prevent="onSubmit">
     <label
       >CARD NUMBER
-      <input type="text" v-model="card_nr" name="nr" />
+      <input type="text" v-model.number="card_nr" name="nr" />
     </label>
     <label
       >CARDHOLDER NAME
@@ -18,7 +18,7 @@
       <div class="column-grid item">
         <label
           >CCV
-          <input type="text" v-model="card_ccv" name="ccv" />
+          <input type="text" v-model.number="card_ccv" name="ccv" />
         </label>
       </div>
     </div>
@@ -36,41 +36,47 @@
 </template>
 
 <script>
-import {v4 as uuid} from "uuid";
+// import { v4 as uuid } from "uuid";
+
 export default {
   name: "CardForm",
   data() {
     return this.initialState();
   },
+
   methods: {
+    onSubmit() {
+      let card_item = {
+        card_nr: this.card_nr,
+        card_name: this.card_name,
+        card_valid: this.card_valid,
+        card_ccv: this.card_ccv,
+        card_vendor: this.card_vendor,
+      };
+      this.$emit("card-submitted", card_item);
+      initialState();
+    },
+
     initialState() {
       return {
-        card_nr: "",
+        card_nr: null,
         card_name: "",
         card_valid: "",
-        card_ccv: "",
+        card_ccv: null,
         card_vendor: "",
       };
     },
     reset() {
       Object.assign(this.$data, this.initialState());
     },
-    addForm(e) {
-      e.preventDefault();
-      const newCard = {
-        card_nr: this.card_nr,
-        card_name: this.card_name,
-        card_valid: this.card_valid,
-        card_ccv: this.card_ccv,
-        card_vendor: this.card_vendor,
-        id: uuid(),
-      };
-      console.log(this.card_nr);
-      // send to parent
-      this.$emit("add-card-event", newCard);
-      // clear the field
-      this.reset();
-      console.log(this.card_nr);
+    onClicked() {
+      console.log(
+        this.card_nr,
+        this.card_name,
+        this.card_valid,
+        this.card_ccv,
+        this.card_vendor
+      );
     },
   },
 };
