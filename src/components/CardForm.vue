@@ -1,30 +1,48 @@
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent>
     <label
       >CARD NUMBER
-      <input type="text" v-model.number="card_nr" name="nr" />
+      <input
+        required
+        oninValid="this.setCustomValidity('Enter 16 digits number')"
+        pattern=".*\S+.*"
+        name="nr"
+        type="Number"
+        min="16"
+        max="16"
+        v-model="card.nr"
+        @input="updateNumber"
+      />
     </label>
+
     <label
       >CARDHOLDER NAME
-      <input type="text" v-model="card_name" name="name" />
+      <input type="text" name="names" v-model="card.name" @input="updateName" />
     </label>
+
     <div class="column-grid">
       <div class="column-grid item">
         <label
           >VALID THRU
-          <input type="text" v-model="card_valid" name="valid" />
+          <input
+            type="text"
+            name="valid"
+            v-model="card.valid"
+            @input="updateValid"
+          />
         </label>
       </div>
       <div class="column-grid item">
         <label
           >CCV
-          <input type="text" v-model.number="card_ccv" name="ccv" />
+          <input type="text" name="ccv" v-model="card.ccv" />
         </label>
       </div>
     </div>
+
     <label
       >VENDOR
-      <select name="vendor" v-model="card_vendor">
+      <select name="vendor" v-model="card.vendor" @input="updateVendor">
         <option>BITCOIN INC</option>
         <option>NINJA BANK</option>
         <option>BLOCK CHAIN INC</option>
@@ -32,53 +50,51 @@
       </select>
     </label>
   </form>
-  <button type="submit" value="Submit" class="btn">ADD CARD</button>
+
+  <button @click="onSubmit" class="btn">ADD CARD</button>
 </template>
 
-<script>
-// import { v4 as uuid } from "uuid";
+<script setup>
+import { reactive } from "vue";
+import { v4 as uuidv4 } from "uuid";
 
-export default {
-  name: "CardForm",
-  data() {
-    return this.initialState();
-  },
+const initialState = {
+  nr: "",
+  name: "",
+  valid: "",
+  ccv: "",
+  vendor: "",
+};
+const card = reactive({ ...initialState });
 
-  methods: {
-    onSubmit() {
-      let card_item = {
-        card_nr: this.card_nr,
-        card_name: this.card_name,
-        card_valid: this.card_valid,
-        card_ccv: this.card_ccv,
-        card_vendor: this.card_vendor,
-      };
-      this.$emit("card-submitted", card_item);
-      initialState();
-    },
+const emits = defineEmits(["nr", "name", "valid", "vendor", "item"]);
+const reset = () => {
+  Object.assign(card, initialState);
+};
 
-    initialState() {
-      return {
-        card_nr: null,
-        card_name: "",
-        card_valid: "",
-        card_ccv: null,
-        card_vendor: "",
-      };
-    },
-    reset() {
-      Object.assign(this.$data, this.initialState());
-    },
-    onClicked() {
-      console.log(
-        this.card_nr,
-        this.card_name,
-        this.card_valid,
-        this.card_ccv,
-        this.card_vendor
-      );
-    },
-  },
+const onSubmit = () => {
+  const newCardItem = {
+    ...card,
+    id: uuidv4(),
+  };
+  emits("item", newCardItem);
+  reset();
+};
+
+const updateNumber = (event) => {
+  emits("nr", event.target.value);
+};
+
+const updateName = (event) => {
+  emits("name", event.target.value);
+};
+
+const updateValid = (event) => {
+  emits("valid", event.target.value);
+};
+
+const updateVendor = (event) => {
+  emits("vendor", event.target.value);
 };
 </script>
 

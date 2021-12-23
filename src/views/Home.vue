@@ -1,18 +1,27 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+  <Top header="E-WALLET" subheader="ACTIVE CARD" />
+  <!-- <Card :number="number" :name="name" :valid="valid" :vendor="vendor" /> -->
+  <CardStack :cards="stacks" />
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+<script setup>
+import Top from "../components/Top.vue";
+// import Card from "../components/Card.vue";
+import CardStack from "../components/CardStack.vue";
 
-export default defineComponent({
-  name: "Home",
-  components: {
-    HelloWorld,
-  },
+import { onMounted, ref } from "vue";
+
+let stacks = ref([]);
+
+onMounted(() => {
+  stacks.value = [
+    ...stacks.value,
+    JSON.parse(localStorage.getItem("card_items"))._value,
+  ];
 });
+
+// let number = ref(null);
+// let name = ref(null);
+// let valid = ref(null);
+// let vendor = ref(null);
 </script>
