@@ -2,42 +2,68 @@
   <div class="card-stack">
     <ul class="card-stack ul">
       <li v-for="card in cards" :key="card.id">
-        <span>{{ card.id }}</span>
-        <span>{{ card.nr }}</span>
-        <span>{{ card.name }}</span>
-        <span>{{ card.valid }}</span>
-        <span>{{ card.ccv }}</span>
-        <span>{{ card.vendor }}</span>
+        <Card
+          @click="select"
+          :number="card.nr"
+          :name="card.name"
+          :valid="card.valid"
+          :vendor="card.vendor"
+          :id="card.id"
+          :style="{
+            background: card.color.background,
+            color: card.color.color,
+          }"
+        />
       </li>
     </ul>
   </div>
-  <!-- <Card /> -->
 </template>
 
 <script setup>
-//todo :: use activated-hook to activate card in the card stack
+import { onMounted, ref } from "vue";
+import Card from "../components/Card.vue";
 
-import { onBeforeUpdate, onMounted, ref } from "vue";
-// import Card from "../components/Card.vue";
+let activeCard = ref([]);
+const emits = defineEmits(["activate"]);
 
-const props = defineProps({
-  cards: Array,
-});
+const select = (event) => {
+  console.log(event.target.parentElement.id);
+  cards.value.map((value, index) => {
+    if (value.id.toString() == event.target.parentElement.id) {
+      activeCard.value = [cards.value[index]];
+    }
+  });
+  emits("activate", activeCard.value[0]);
+};
 
-const cards = ref([props.cards]);
+let cards = ref([]);
 
-const display = () => {
-  console.log(cards.value);
-
-  cards.value = cards.value[Object.keys(cards.value)[0]];
-  console.log(cards.value);
+const getCards = () => {
+  if (localStorage.getItem("card_items")) {
+    let temp = ref([]);
+    temp.value = [
+      ...temp.value,
+      JSON.parse(localStorage.getItem("card_items"))._value,
+    ];
+    temp.value = temp.value[Object.keys(temp.value)[0]];
+    cards.value = temp.value;
+  }
 };
 
 onMounted(() => {
-  display();
+  getCards();
 });
-
-onBeforeUpdate(() => {});
 </script>
 
-<style></style>
+<style>
+.card-stack {
+  margin-top: 40px;
+}
+.card-stack.ul {
+  padding: 0;
+}
+li {
+  cursor: pointer;
+  list-style: none;
+}
+</style>

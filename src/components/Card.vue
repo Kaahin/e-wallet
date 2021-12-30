@@ -1,25 +1,25 @@
 <template>
-  <label></label>
-  <div class="card">
+  <div class="card" :id="props.id">
     <div class="logo">
-      <img :src="logo" alt="logo" />
-      <img src="@/assets/wifi.svg" alt="wifi" />
+      <img id="vendor" :src="logo" alt="logo" />
+      <img id="wifi" :src="getWifi(props.vendor)" alt="wifi" />
     </div>
-    <img class="chip" src="@/assets/chip.svg" alt="chip" />
-
-    <p class="card_number">
+    <div class="chip">
+      <img id="chip" src="@/assets/chip.svg" alt="chip" />
+    </div>
+    <div class="card_number">
       {{ props.number === null ? "XXXX XXXX XXXX XXXX" : props.number }}
-    </p>
+    </div>
     <div class="grid">
       <div class="card_space left">
-        <span class="card_label"> CARDHOLDER NAME </span>
-        <p class="card_info">
+        <span class="card_label left"> CARDHOLDER NAME </span>
+        <p class="card_info left">
           {{ props.name === null ? "FIRSTNAME LASTNAME" : props.name }}
         </p>
       </div>
       <div class="card_space right">
-        <span class="card_label"> EXPIRES </span>
-        <p class="card_info">
+        <span class="card_label right"> VALID THRU </span>
+        <p class="card_info right">
           {{ props.valid === null ? "MM/YY" : props.valid }}
         </p>
       </div>
@@ -36,32 +36,51 @@ const props = defineProps({
   name: String,
   valid: String,
   vendor: String,
+  id: String,
 });
 
 let logo = ref(null);
+let wifi = ref(null);
 onMounted(() => {
   logo.value = getLogoPath(props.vendor);
+  wifi.value = getWifi(props.vendor);
 });
 onBeforeUpdate(() => {
   logo.value = getLogoPath(props.vendor);
+  wifi.value = getWifi(props.vendor);
 });
 
-const getLogoPath = (vendor) => {
-  let logo = "";
-  vendor === null ? (logo = "BITCOIN") : (logo = vendor.split(" ")[0]);
+const getWifi = (vendor) => {
+  let obj = "";
+  if (vendor == null || vendor == undefined || vendor == "") {
+    obj = "wifi";
+  } else {
+    vendor.split(" ")[0] === "BITCOIN" ? (obj = "wifi") : (obj = "wifi-white");
+  }
   var images = require.context("../assets/", false, /\.svg$/);
-  return images("./" + logo + ".svg");
+  return images("./" + obj + ".svg");
+};
+const getLogoPath = (vendor) => {
+  let obj = "";
+  vendor == null || vendor == undefined || vendor == ""
+    ? (obj = "BITCOIN")
+    : (obj = vendor.split(" ")[0]);
+  var images = require.context("../assets/", false, /\.svg$/);
+  return images("./" + obj + ".svg");
 };
 </script>
 
 <style scoped>
 .card {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin: 0px 16px 40px 16px;
   width: 382px;
   height: 241px;
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
   border-radius: 8px;
-  /* filter: drop-shadow(0px 0px 16px rgba(0, 0, 0, 0.12)); */
   background: linear-gradient(
       248.3deg,
       rgba(255, 255, 255, 0.24) 0%,
@@ -73,34 +92,74 @@ const getLogoPath = (vendor) => {
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
-  padding: 1.5rem 1.5rem 0 1.5rem;
+  width: 382px;
+}
+#vendor {
+  margin: 28px 25px 0px 0px;
+}
+#wifi {
+  margin: 23px 0px 0px 19px;
 }
 .chip {
+  width: 366px;
   display: flex;
   justify-content: flex-start;
-  padding-left: 1.5em;
-  margin-bottom: 2em;
+  margin: 0px 0px 13px 16px;
 }
 .card_number {
-  padding: 0 1em;
-  margin: 0;
+  margin: 0px 16px 16px 16px;
   font-family: PT Mono;
   font-style: normal;
   font-weight: normal;
-  font-size: 20px;
+  font-size: 27px;
   line-height: 32px;
   letter-spacing: 0.03em;
+  width: 350px;
+  height: 42px;
+  text-align: center;
 }
-
+#card-number {
+  width: 350px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+}
 .grid {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin: 1em 1em 0 1em;
+  width: 382px;
+  margin-bottom: 17px;
 }
-
+.card_space.left {
+  margin-left: 16px;
+}
+.card_space.right {
+  margin-right: 20px;
+}
 .card_info {
+  font-family: PT Mono;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 20px;
   display: flex;
-  margin-top: 0;
+  align-items: center;
+  margin: 0;
+  height: 32px;
+  text-transform: uppercase;
+}
+.card_label {
+  font-family: PT Mono;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 13px;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+}
+.right {
+  justify-content: flex-end;
 }
 </style>

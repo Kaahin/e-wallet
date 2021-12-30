@@ -1,13 +1,23 @@
 <template>
-  <Top header="ADD A NEW BANK CARD" subheader="NEW CARD" />
-  <Card :number="number" :name="name" :valid="valid" :vendor="vendor" />
-  <CardForm
-    @nr="getNumber"
-    @name="getName"
-    @valid="getValid"
-    @vendor="getVendor"
-    @item="getItem"
-  ></CardForm>
+  <div class="add-card">
+    <div class="components">
+      <div class="top">
+        <Top header="ADD A NEW BANK CARD" subheader="NEW CARD" />
+      </div>
+      <div class="center">
+        <Card :number="number" :name="name" :valid="valid" :vendor="vendor" />
+      </div>
+      <div class="bottom">
+        <CardForm
+          @nr="getNumber"
+          @name="getName"
+          @valid="getValid"
+          @vendor="getVendor"
+          @item="getItem"
+        ></CardForm>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -62,13 +72,37 @@ watch(
 );
 </script>
 
-<style scoped>
-* {
-  margin: 0;
-  box-sizing: border-box;
+<style>
+@import url("https://fonts.googleapis.com/css2?family=PT+Mono&display=swap");
+
+.add-card {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  align-content: center;
+  align-items: center;
+}
+.components {
+  width: 414px;
+}
+.top {
+  width: 414px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.center {
+  width: 414px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.bottom {
+  width: 414px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>
