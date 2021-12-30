@@ -2,6 +2,7 @@
   <div class="card-stack">
     <ul class="card-stack ul">
       <li v-for="card in cards" :key="card.id">
+        <button :id="card.id" @click="deleteCard(card.id)">x</button>
         <Card
           @click="select"
           :number="card.nr"
@@ -27,13 +28,27 @@ let activeCard = ref([]);
 const emits = defineEmits(["activate"]);
 
 const select = (event) => {
-  console.log(event.target.parentElement.id);
   cards.value.map((value, index) => {
-    if (value.id.toString() == event.target.parentElement.id) {
+    if (value.id.toString() == event.target.closest(".card").id) {
       activeCard.value = [cards.value[index]];
     }
   });
   emits("activate", activeCard.value[0]);
+};
+
+const deleteCard = (id) => {
+  cards.value.map((value, index) => {
+    if (value.id.toString() == id) {
+      console.log(index);
+      let storedCards = ref();
+      storedCards.value = JSON.parse(localStorage.getItem("card_items"));
+      console.log(JSON.stringify(storedCards.value._value[index]));
+      console.log(storedCards.value._value.splice(index, 1));
+      console.log(JSON.stringify(storedCards.value._value));
+      localStorage.setItem("card_items", JSON.stringify(storedCards.value));
+      window.location.reload();
+    }
+  });
 };
 
 let cards = ref([]);
@@ -53,6 +68,8 @@ const getCards = () => {
 onMounted(() => {
   getCards();
 });
+
+
 </script>
 
 <style>
